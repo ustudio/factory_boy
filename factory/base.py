@@ -229,6 +229,7 @@ class Factory(BaseFactory):
     class AssociatedClassError(RuntimeError): pass
     
     _creation_function = (DJANGO_CREATION,)  # Using a tuple to keep the creation function from turning into an instance method
+    _build_function = (MOGO_BUILD,)  # Using a tuple to keep the creation function from turning into an instance method
     @classmethod
     def set_creation_function(cls, creation_function):
         cls._creation_function = (creation_function,)
