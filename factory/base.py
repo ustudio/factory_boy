@@ -33,6 +33,7 @@ STUB_STRATEGY = 'stub'
 # Creation functions. Use Factory.set_creation_function() to set a creation function appropriate for your ORM.
 
 DJANGO_CREATION = lambda class_to_create, **kwargs: class_to_create.objects.create(**kwargs)
+MOGO_BUILD = lambda class_to_create, **kwargs: class_to_create.new(**kwargs)
         
 # Special declarations
 
@@ -234,11 +235,18 @@ class Factory(BaseFactory):
     @classmethod
     def get_creation_function(cls):
         return cls._creation_function[0]
-    
+
+    @classmethod
+    def set_build_function(cls, build_function):
+        cls._build_function = (build_function, )
+    @classmethod
+    def get_build_function(cls):
+        return cls._build_function[0]
+
     @classmethod
     def build(cls, **kwargs):
-        return getattr(cls, CLASS_ATTRIBUTE_ASSOCIATED_CLASS)(**cls.attributes(**kwargs))
-        
+        return cls.get_build_function()(getattr(cls, CLASS_ATTRIBUTE_ASSOCIATED_CLASS), **cls.attributes(**kwargs))
+
     @classmethod
     def create(cls, **kwargs):
         return cls.get_creation_function()(getattr(cls, CLASS_ATTRIBUTE_ASSOCIATED_CLASS), **cls.attributes(**kwargs))
